@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Yunnan Romantic Journey · Interactive Planner</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #020617;
+      --accent: #f97316;
+      --accent-soft: rgba(249, 115, 22, 0.18);
+      --text-main: #e5e7eb;
+      --text-sub: #9ca3af;
+      --border-soft: #1f2937;
+      --lock: #6b7280;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #1e293b 0, #020617 55%);
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 960px;
+      background: rgba(15, 23, 42, 0.95);
+      border-radius: 24px;
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      box-shadow:
+        0 20px 60px rgba(15, 23, 42, 0.8),
+        0 0 0 1px rgba(15, 23, 42, 0.9);
+      padding: 22px 22px 26px;
+      backdrop-filter: blur(20px);
+    }
+
+    header {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    header h1 {
+      font-size: 1.5rem;
+      letter-spacing: 0.03em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0;
+    }
+
+    header h1 span.badge {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      background: linear-gradient(
+        120deg,
+        rgba(248, 250, 252, 0.06),
+        rgba(249, 115, 22, 0.22)
+      );
+      border-radius: 999px;
+      padding: 3px 10px;
+      border: 1px solid rgba(249, 115, 22, 0.55);
+      color: #fed7aa;
+    }
+
+    header p {
+      margin: 0;
+      font-size: 0.9rem;
+      color: var(--text-sub);
+    }
+
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 6px;
+      font-size: 0.78rem;
+      color: #cbd5f5;
+    }
+
+    .meta-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.38);
+      background: radial-gradient(
+        circle at top left,
+        rgba(129, 140, 248, 0.35),
+        rgba(15, 23, 42, 0.9)
+      );
+    }
+
+    .meta-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 10px rgba(249, 115, 22, 0.8);
+    }
+
+    .mode-banner {
+      margin: 8px 0 16px;
+      padding: 10px 12px;
+      border-radius: 16px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      background: radial-gradient(
+        circle at top left,
+        rgba(248, 250, 252, 0.05),
+        rgba(15, 23, 42, 0.95)
+      );
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.86rem;
+    }
+
+    .mode-badge {
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border: 1px solid var(--accent);
+      color: #fed7aa;
+      background: var(--accent-soft);
+    }
+
+    .today-text {
+      font-weight: 500;
+      color: #e5e7eb;
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+      margin-top: 4px;
+    }
+
+    .btn {
+      border-radius: 999px;
+      border: none;
+      padding: 9px 16px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(120deg, #f97316, #fb923c);
+      color: #111827;
+      box-shadow:
+        0 10px 30px rgba(248, 113, 22, 0.65),
+        0 0 0 1px rgba(15, 23, 42, 0.8);
+      transition: transform 0.08s ease, box-shadow 0.08s ease,
+        filter 0.08s ease;
+    }
+
+    .btn span.icon {
+      font-size: 1.05rem;
+    }
+
+    .btn.secondary {
+      background: transparent;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      color: #e5e7eb;
+      box-shadow: none;
+      padding: 8px 13px;
+    }
+
+    .btn:hover {
+      filter: brightness(1.02);
+      transform: translateY(-1px);
+      box-shadow:
+        0 14px 35px rgba(248, 113, 22, 0.85),
+        0 0 0 1px rgba(15, 23, 42, 0.9);
+    }
+
+    .btn.secondary:hover {
+      box-shadow: 0 8px 25px rgba(15, 23, 42, 0.9);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+      box-shadow:
+        0 8px 22px rgba(15, 23, 42, 0.9),
+        0 0 0 1px rgba(15, 23, 42, 0.9);
+    }
+
+    .hint {
+      font-size: 0.78rem;
+      color: var(--text-sub);
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .card {
+      position: relative;
+      border-radius: 18px;
+      border: 1px solid var(--border-soft);
+      background: radial-gradient(
+        circle at top left,
+        rgba(15, 23, 42, 0.9),
+        rgba(2, 6, 23, 0.98)
+      );
+      padding: 14px 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(
+        circle at top left,
+        rgba(249, 115, 22, 0.12),
+        transparent
+      );
+      pointer-events: none;
+    }
+
+    .card-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    .day-label {
+      font-size: 0.86rem;
+      font-weight: 600;
+      color: #e5e7eb;
+    }
+
+    .day-theme {
+      font-size: 0.8rem;
+      color: var(--text-sub);
+    }
+
+    .chip {
+      font-size: 0.72rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      padding: 3px 8px;
+      color: #a5b4fc;
+      background: rgba(15, 23, 42, 0.9);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .chip-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 8px rgba(34, 197, 94, 0.8);
+    }
+
+    .chip.locked {
+      color: var(--lock);
+      border-color: rgba(75, 85, 99, 0.9);
+    }
+
+    .chip.locked .chip-dot {
+      background: var(--lock);
+      box-shadow: none;
+    }
+
+    .content {
+      margin-top: 5px;
+      font-size: 0.8rem;
+      line-height: 1.5;
+      color: var(--text-main);
+      white-space: pre-line;
+    }
+
+    .locked-overlay {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(
+        circle at top,
+        rgba(15, 23, 42, 0.95),
+        rgba(15, 23, 42, 0.98)
+      );
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      color: var(--lock);
+      font-size: 0.82rem;
+      pointer-events: none;
+    }
+
+    .locked-overlay span.lock-icon {
+      font-size: 1.6rem;
+    }
+
+    @media (max-width: 640px) {
+      .app {
+        padding: 18px 16px 22px;
+        border-radius: 18px;
+      }
+      header h1 {
+        font-size: 1.25rem;
+      }
+      .mode-banner {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .controls {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .cards {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>
+        Yunnan Journey
+        <span class="badge">Interactive · Jerry &amp; Kat</span>
+      </h1>
+      <p>Before departure: trip “blind box”. After departure: auto-unlocking daily story. ✨</p>
+      <div class="meta-row">
+        <div class="meta-chip">
+          <span class="meta-dot"></span>
+          <span>Trip dates: 2025-12-21 → 2026-01-03</span>
+        </div>
+        <div class="meta-chip">
+          <span>Route: Dali · Lugu Lake · Lijiang · Shangri-La · Feilai Temple</span>
+        </div>
+      </div>
+    </header>
+
+    <section id="modeBanner" class="mode-banner">
+      <div>
+        <div class="today-text" id="todayText"></div>
+        <div id="modeText" style="margin-top: 4px;"></div>
+      </div>
+      <div class="mode-badge" id="modeBadge"></div>
+    </section>
+
+    <section class="controls">
+      <div>
+        <button id="randomBtn" class="btn">
+          <span class="icon">🎲</span>
+          <span>Pick 3 random days</span>
+        </button>
+        <button id="resetBtn" class="btn secondary" style="display:none;">
+          Reset picks
+        </button>
+      </div>
+      <div class="hint" id="hintText"></div>
+    </section>
+
+    <section id="cards" class="cards"></section>
+  </div>
+
+  <!-- All logic + Firebase (v9) in one ES module -->
+  <script type="module">
+    // ==========================
+    // 0. Firebase setup (fill your own config)
+    // ==========================
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import {
+      getDatabase,
+      ref,
+      push,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+
+    // TODO: replace with your Firebase project config
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      databaseURL: "https://YOUR_PROJECT_ID.firebaseio.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT_ID.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    function logEvent(eventType, payload = {}) {
+      try {
+        const eventsRef = ref(db, "tripEvents");
+        push(eventsRef, {
+          type: eventType,
+          payload,
+          ts: serverTimestamp()
+        });
+      } catch (e) {
+        // Fail silently on logging errors
+        console.warn("Firebase logEvent failed:", e);
+      }
+    }
+
+    // ==========================
+    // 1. Itinerary data
+    // ==========================
+
+    const itinerary = [
+      {
+        id: 1,
+        date: "2025-12-21",
+        label: "Day 1 · Dec 21 · Shenzhen → Kunming → Dali",
+        theme: "First night in Dali 🌙",
+        content: `• SZ → Kunming ✈️ HU7767 06:55–09:30
+• Airport → Kunming Railway Station → high-speed train to Dali 🚄
+• Check-in: guesthouse inside Dali Old Town
+• Skip main street, go to “Bedsheet Factory” art zone: coffee, books, quiet corners
+• Night walk on Renmin Road, slow start of the trip`
+      },
+      {
+        id: 2,
+        date: "2025-12-22",
+        label: "Day 2 · Dec 22 · Dali · Erhai loop",
+        theme: "Private blue of Erhai 💙",
+        content: `• Car (not e-scooter in winter) → focus on west side eco-corridor
+• Morning: Caicun or Longkan pier, sunrise + red cypress
+• Stop at “Bridge” & “Couple Trees” for photos
+• Lunch in Xizhou: Xizhou baba + simple local dishes
+• Afternoon: coffee by the lake near Wenbi Village / Ideal Town
+• Stay for Erhai sunset, back to Old Town for dinner`
+      },
+      {
+        id: 3,
+        date: "2025-12-23",
+        label: "Day 3 · Dec 23 · Dali · Handcraft & Cangshan",
+        theme: "Indigo dye & mountain view 🌀",
+        content: `• Morning: private Bai tie-dye workshop near Xizhou
+• Make a pair of couple coasters / small scarves as trip memory
+• Lunch: simple local food in the village
+• Afternoon: Jizhao Nunnery – flowers, garden, vegetarian set
+• Late afternoon: Gantong cable car to mid-level viewpoint
+• View over Dali plain + Erhai at sunset`
+      },
+      {
+        id: 4,
+        date: "2025-12-24",
+        label: "Day 4 · Dec 24 · Dali → Lugu Lake",
+        theme: "Road to the matriarchal lake ✨",
+        content: `• Tourist bus / charter car to Lugu Lake (5–6 h, mountain road)
+• Check-in: lake-view guesthouse in Lige or Daluoshui
+• Short walk by the lakeshore, get used to the pace
+• If available: join Mosuo bonfire night, songs + round dance 🔥`
+      },
+      {
+        id: 5,
+        date: "2025-12-25",
+        label: "Day 5 · Dec 25 · Lugu Lake loop",
+        theme: "Clouds on the water ☁️",
+        content: `• Car loop: Lige view deck → Nisai Village → Lovers’ Tree → Goddess Bay
+• Lunch at Goddess Bay or Zhao family bay
+• Afternoon: Walking Marriage Bridge + Caohai
+• Wooden “pig trough boat” to the lake center, feed seagulls 🛶
+• Quiet sunset stop at a less-crowded viewpoint`
+      },
+      {
+        id: 6,
+        date: "2025-12-26",
+        label: "Day 6 · Dec 26 · Lugu Lake → Lijiang",
+        theme: "Soft time in Shuhe 🏘️",
+        content: `• Morning drive back to Lijiang (about 4 h)
+• Skip busy Dayan, check in at a guesthouse in Shuhe Old Town
+• Terrace café with Yulong Snow Mountain view ☕️
+• Evening walk in stone alleys, listen to the stream`
+      },
+      {
+        id: 7,
+        date: "2025-12-27",
+        label: "Day 7 · Dec 27 · Lijiang · Snow mountain",
+        theme: "Snow peak & night lights 🏔️",
+        content: `• Option A: Yulong Snow Mountain day trip (cable car + Glacier Park + Blue Moon Valley)
+• Option B: Yuhu Village – stone village + quiet snow-mountain reflection
+• Light horse ride / short hike if you feel like it
+• Evening: dinner in Shuhe or Dayan Old Town
+• View over Old Town lights from a rooftop / hill café`
+      },
+      {
+        id: 8,
+        date: "2025-12-28",
+        label: "Day 8 · Dec 28 · Lijiang → Shangri-La",
+        theme: "Tiger Leaping Gorge vibes 🐯",
+        content: `• Car / tourist bus Lijiang → Shangri-La (about 4 h)
+• Stop at Tiger Leaping Gorge viewing area, feel the Jinsha River power
+• Check-in: warm Tibetan-style inn in Dukezong Old Town
+• Slow pace, drink more water, adapt to altitude
+• Sunset at Guishan Park, spin the giant prayer wheel for wishes`
+      },
+      {
+        id: 9,
+        date: "2025-12-29",
+        label: "Day 9 · Dec 29 · Shangri-La",
+        theme: "Monastery & grassland night 🔔",
+        content: `• Morning: Ganden Sumtseling Monastery (“Little Potala”) with local guide
+• Lunch: simple Tibetan set meal
+• Afternoon: Napa Lake winter grassland, birds, wide open view
+• Visit a nomad family if possible, try butter tea
+• If sky is clear: short night walk to see plateau stars`
+      },
+      {
+        id: 10,
+        date: "2025-12-30",
+        label: "Day 10 · Dec 30 · Shangri-La",
+        theme: "Hidden lake or national park 💧",
+        content: `• If weather/road is good: charter car to “Bottomless Lake” – quiet alpine lake, light picnic
+• If not: switch to Pudacuo National Park (open parts)
+• Back to Dukezong Old Town, early rest for New Year’s Eve`
+      },
+      {
+        id: 11,
+        date: "2025-12-31",
+        label: "Day 11 · Dec 31 · Shangri-La → Feilai Temple",
+        theme: "NYE under Meili stars 🌌",
+        content: `• Drive along Yunnan–Tibet road to Deqin / Feilai Temple
+• Photo stop at Jinsha River Big Bend
+• Check-in: hotel facing Meili (big window + heating / oxygen)
+• New Year’s Eve: hot drink, watch last sunset on Kawagarbo
+• If clear: starry sky above Meili, indoor stargazing night`
+      },
+      {
+        id: 12,
+        date: "2026-01-01",
+        label: "Day 12 · Jan 1 · Feilai Temple & Mingyong Glacier",
+        theme: "First light of the year 🌅",
+        content: `• Early wake-up, quietly wait for possible “golden sunrise” on Meili
+• Ritual moment even if no perfect golden light
+• If energy is fine: drive to Mingyong Glacier, hike to view deck
+• Afternoon: back to hotel, slow New Year afternoon`
+      },
+      {
+        id: 13,
+        date: "2026-01-02",
+        label: "Day 13 · Jan 2 · Deqin → Shangri-La → Kunming",
+        theme: "Goodbye to the plateau 🧳",
+        content: `• Morning drive Deqin → Shangri-La (about 5 h)
+• Best: evening flight Shangri-La → Kunming ✈️
+• Backup: overnight bus Shangri-La → Kunming (less comfy)
+• Stay near Kunming Airport, long shower + good sleep`
+      },
+      {
+        id: 14,
+        date: "2026-01-03",
+        label: "Day 14 · Jan 3 · Kunming → Shenzhen",
+        theme: "Back to daily life, with memories 📖",
+        content: `• Easy morning; if time allows: Green Lake Park + seagulls
+• Head to Kunming Changshui Airport
+• CA3558 Kunming → Shenzhen 13:15–15:15
+• Trip ends, but “Yunnan chapter” stays in both of your stories`
+      }
+    ];
+
+    // ==========================
+    // 2. Date helpers
+    // ==========================
+
+    const STORAGE_KEY_RANDOM = "yn_trip_random_days_v1";
+
+    function formatDateDisplay(date) {
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, "0");
+      const d = String(date.getDate()).padStart(2, "0");
+      return `${y}-${m}-${d}`;
+    }
+
+    function getTodayDateOnly() {
+      const now = new Date();
+      return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    }
+
+    const firstDate = new Date(itinerary[0].date);
+    const lastDate = new Date(itinerary[itinerary.length - 1].date);
+
+    function getMode() {
+      const today = getTodayDateOnly();
+      if (today < firstDate) return "pre";
+      if (today > lastDate) return "post";
+      return "during";
+    }
+
+    function loadRandomDays() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY_RANDOM);
+        if (!raw) return [];
+        const arr = JSON.parse(raw);
+        if (!Array.isArray(arr)) return [];
+        return arr;
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveRandomDays(ids) {
+      localStorage.setItem(STORAGE_KEY_RANDOM, JSON.stringify(ids));
+    }
+
+    function resetRandomDays() {
+      localStorage.removeItem(STORAGE_KEY_RANDOM);
+    }
+
+    function pickRandomDistinctDays(n) {
+      const ids = itinerary.map((d) => d.id);
+      // shuffle
+      for (let i = ids.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [ids[i], ids[j]] = [ids[j], ids[i]];
+      }
+      return ids.slice(0, n);
+    }
+
+    // ==========================
+    // 3. DOM + render
+    // ==========================
+
+    const todayTextEl = document.getElementById("todayText");
+    const modeTextEl = document.getElementById("modeText");
+    const modeBadgeEl = document.getElementById("modeBadge");
+    const cardsEl = document.getElementById("cards");
+    const randomBtn = document.getElementById("randomBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const hintTextEl = document.getElementById("hintText");
+
+    function render() {
+      const mode = getMode();
+      const today = getTodayDateOnly();
+      todayTextEl.textContent = `Today: ${formatDateDisplay(today)}`;
+
+      if (mode === "pre") {
+        modeBadgeEl.textContent = "Before trip · blind box mode";
+        modeTextEl.textContent =
+          "She can sneak peek 3 random days before the real journey starts. 🎁";
+        randomBtn.style.display = "inline-flex";
+        resetBtn.style.display = "inline-flex";
+        renderPreTrip();
+      } else if (mode === "during") {
+        modeBadgeEl.textContent = "On the road · daily unlock";
+        modeTextEl.textContent =
+          "From Day 1 to today will auto-unlock; later days stay locked as surprises.";
+        randomBtn.style.display = "none";
+        resetBtn.style.display = "none";
+        renderDuringTrip(today);
+      } else {
+        modeBadgeEl.textContent = "After trip · memory mode";
+        modeTextEl.textContent =
+          "All days are unlocked now, like a small online travel diary. 📝";
+        randomBtn.style.display = "none";
+        resetBtn.style.display = "none";
+        renderPostTrip();
+      }
+    }
+
+    function renderPreTrip() {
+      const selectedIds = loadRandomDays();
+      cardsEl.innerHTML = "";
+
+      if (!selectedIds.length) {
+        hintTextEl.textContent =
+          "Tip: click “Pick 3 random days” and let her draw a mini preview of the trip.";
+        return;
+      }
+
+      hintTextEl.textContent =
+        "3 days selected. You can reset and draw again if you want.";
+
+      const selectedDays = itinerary
+        .filter((d) => selectedIds.includes(d.id))
+        .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+      selectedDays.forEach((day) => {
+        cardsEl.appendChild(createCard(day, { unlocked: true }));
+      });
+    }
+
+    function renderDuringTrip(today) {
+      cardsEl.innerHTML = "";
+      hintTextEl.textContent =
+        "Green dot = unlocked; lock icon = future surprise.";
+
+      itinerary.forEach((day) => {
+        const dayDate = new Date(day.date);
+        const unlocked = dayDate <= today;
+        cardsEl.appendChild(createCard(day, { unlocked }));
+      });
+    }
+
+    function renderPostTrip() {
+      cardsEl.innerHTML = "";
+      hintTextEl.textContent =
+        "All days unlocked. You can scroll through and replay the whole story anytime.";
+
+      itinerary.forEach((day) => {
+        cardsEl.appendChild(createCard(day, { unlocked: true }));
+      });
+    }
+
+    function createCard(day, options) {
+      const { unlocked } = options;
+      const card = document.createElement("article");
+      card.className = "card";
+      card.dataset.dayId = day.id;
+
+      const headerRow = document.createElement("div");
+      headerRow.className = "card-header-row";
+
+      const left = document.createElement("div");
+
+      const label = document.createElement("div");
+      label.className = "day-label";
+      label.textContent = day.label;
+
+      const theme = document.createElement("div");
+      theme.className = "day-theme";
+      theme.textContent = day.theme;
+
+      left.appendChild(label);
+      left.appendChild(theme);
+
+      const chip = document.createElement("div");
+      chip.className = "chip" + (unlocked ? "" : " locked");
+
+      const dot = document.createElement("div");
+      dot.className = "chip-dot";
+      chip.appendChild(dot);
+
+      const chipText = document.createElement("span");
+      chipText.textContent = unlocked ? "Unlocked" : "Locked (future day)";
+      chip.appendChild(chipText);
+
+      headerRow.appendChild(left);
+      headerRow.appendChild(chip);
+
+      const content = document.createElement("div");
+      content.className = "content";
+      content.textContent = day.content;
+
+      card.appendChild(headerRow);
+      card.appendChild(content);
+
+      if (!unlocked) {
+        const overlay = document.createElement("div");
+        overlay.className = "locked-overlay";
+        const icon = document.createElement("span");
+        icon.className = "lock-icon";
+        icon.textContent = "🔒";
+        const text = document.createElement("div");
+        text.textContent = "This day will unlock when you actually reach it.";
+        overlay.appendChild(icon);
+        overlay.appendChild(text);
+        card.appendChild(overlay);
+      }
+
+      card.addEventListener("click", () => {
+        logEvent("open_day_card", {
+          dayId: day.id,
+          date: day.date,
+          unlocked
+        });
+      });
+
+      return card;
+    }
+
+    // ==========================
+    // 4. Events
+    // ==========================
+
+    randomBtn.addEventListener("click", () => {
+      const ids = pickRandomDistinctDays(3);
+      saveRandomDays(ids);
+      logEvent("random_pick", { pickedIds: ids });
+      render();
+    });
+
+    resetBtn.addEventListener("click", () => {
+      resetRandomDays();
+      logEvent("reset_random_pick");
+      render();
+    });
+
+    // initial render
+    logEvent("page_view", { tsLocal: Date.now() });
+    render();
+  </script>
+</body>
+</html>

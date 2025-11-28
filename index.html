@@ -2,417 +2,979 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Yunnan Romantic Journey · Interactive Planner</title>
+  <title>Yunnan Journey · Jerry & Kat</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #0f172a;
-      --card-bg: #020617;
-      --accent: #f97316;
-      --accent-soft: rgba(249, 115, 22, 0.18);
-      --text-main: #e5e7eb;
-      --text-sub: #9ca3af;
-      --border-soft: #1f2937;
-      --lock: #6b7280;
+      --bg-deep: #0a0a0f;
+      --bg-card: rgba(18, 18, 28, 0.85);
+      --accent-warm: #e8a87c;
+      --accent-sand: #c4a77d;
+      --accent-teal: #7ec8c8;
+      --accent-slate: #94a3b8;
+      --text-main: #f0ebe3;
+      --text-muted: #9a958e;
+      --text-soft: #c7c2ba;
+      --border-subtle: rgba(200, 190, 175, 0.12);
+      --glow-warm: rgba(232, 168, 124, 0.3);
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
 
     body {
-      margin: 0;
       min-height: 100vh;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
-        "Segoe UI", sans-serif;
-      background: radial-gradient(circle at top, #1e293b 0, #020617 55%);
+      font-family: 'Crimson Pro', Georgia, serif;
+      background: var(--bg-deep);
       color: var(--text-main);
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* Background layers */
+    .bg-layer {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background: 
+        radial-gradient(ellipse 80% 50% at 20% 20%, rgba(232, 168, 124, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse 60% 40% at 80% 80%, rgba(126, 200, 200, 0.05) 0%, transparent 50%),
+        linear-gradient(180deg, #0a0a0f 0%, #0d1117 50%, #0a0a0f 100%);
+    }
+
+    /* Enhanced stars */
+    .stars-layer {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .star {
+      position: absolute;
+      border-radius: 50%;
+      background: #fff;
+    }
+
+    .star.tiny {
+      width: 1px;
+      height: 1px;
+      animation: twinkleTiny 3s ease-in-out infinite;
+    }
+
+    .star.small {
+      width: 2px;
+      height: 2px;
+      animation: twinkleSmall 4s ease-in-out infinite;
+      box-shadow: 0 0 4px rgba(255, 255, 255, 0.5);
+    }
+
+    .star.medium {
+      width: 3px;
+      height: 3px;
+      animation: twinkleMedium 5s ease-in-out infinite;
+      box-shadow: 0 0 8px rgba(255, 255, 255, 0.6), 0 0 12px rgba(232, 168, 124, 0.3);
+    }
+
+    .star.bright {
+      width: 4px;
+      height: 4px;
+      animation: twinkleBright 6s ease-in-out infinite;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(126, 200, 200, 0.4);
+    }
+
+    @keyframes twinkleTiny {
+      0%, 100% { opacity: 0.2; }
+      50% { opacity: 0.8; }
+    }
+
+    @keyframes twinkleSmall {
+      0%, 100% { opacity: 0.3; transform: scale(0.8); }
+      50% { opacity: 1; transform: scale(1.2); }
+    }
+
+    @keyframes twinkleMedium {
+      0%, 100% { opacity: 0.4; transform: scale(0.9); }
+      30% { opacity: 1; transform: scale(1.3); }
+      70% { opacity: 0.6; transform: scale(1); }
+    }
+
+    @keyframes twinkleBright {
+      0%, 100% { opacity: 0.5; transform: scale(1); }
+      25% { opacity: 1; transform: scale(1.4); }
+      50% { opacity: 0.7; transform: scale(1.1); }
+      75% { opacity: 1; transform: scale(1.3); }
+    }
+
+    /* Shooting star */
+    .shooting-star {
+      position: absolute;
+      width: 100px;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.8), transparent);
+      animation: shoot 8s linear infinite;
+      opacity: 0;
+    }
+
+    @keyframes shoot {
+      0% { transform: translateX(-100px) translateY(0); opacity: 0; }
+      5% { opacity: 1; }
+      15% { transform: translateX(400px) translateY(200px); opacity: 0; }
+      100% { opacity: 0; }
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+
+    /* Hero with typing effect */
+    .hero {
+      text-align: center;
+      padding: 50px 20px 40px;
+    }
+
+    .hero h1 {
+      font-size: clamp(1.8rem, 5vw, 2.8rem);
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: var(--text-main);
+      margin-bottom: 12px;
+      opacity: 0;
+      animation: fadeSlideUp 1s ease forwards 0.3s;
+    }
+
+    .hero-subtitle {
+      font-size: 1rem;
+      font-style: italic;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+      opacity: 0;
+      animation: fadeSlideUp 1s ease forwards 0.6s;
+    }
+
+    .hero-names {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 24px;
+      background: rgba(232, 168, 124, 0.08);
+      border: 1px solid var(--border-subtle);
+      border-radius: 100px;
+      font-size: 0.9rem;
+      color: var(--accent-warm);
+      letter-spacing: 0.08em;
+      opacity: 0;
+      animation: fadeSlideUp 1s ease forwards 0.9s;
+    }
+
+    .hero-names .dot {
+      width: 4px;
+      height: 4px;
+      background: var(--accent-warm);
+      border-radius: 50%;
+      opacity: 0.6;
+    }
+
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Route ribbon with stagger */
+    .route-ribbon {
       display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 28px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .route-stop {
+      opacity: 0;
+      animation: fadeIn 0.5s ease forwards;
+    }
+
+    .route-stop::after {
+      content: '→';
+      margin-left: 6px;
+      opacity: 0.4;
+    }
+
+    .route-stop:last-child::after { display: none; }
+
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+
+    /* Info banner */
+    .info-banner {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 32px;
+      margin: 36px 0;
+      padding: 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      opacity: 0;
+      animation: fadeSlideUp 0.8s ease forwards 1.2s;
+    }
+
+    .info-item { text-align: center; }
+
+    .info-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 4px;
+    }
+
+    .info-value {
+      font-size: 0.95rem;
+      color: var(--text-main);
+    }
+
+    /* Mode section */
+    .mode-section {
+      text-align: center;
+      padding: 28px 24px;
+      margin: 28px 0;
+      background: rgba(126, 200, 200, 0.04);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+    }
+
+    .mode-badge {
+      display: inline-block;
+      padding: 5px 14px;
+      background: var(--accent-warm);
+      color: var(--bg-deep);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      border-radius: 100px;
+      margin-bottom: 10px;
+    }
+
+    .mode-title {
+      font-size: 1rem;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+
+    .mode-desc {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    /* Countdown */
+    .countdown {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 16px;
+    }
+
+    .countdown-item {
+      text-align: center;
+    }
+
+    .countdown-num {
+      font-family: 'Space Mono', monospace;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--accent-warm);
+      line-height: 1;
+    }
+
+    .countdown-label {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-top: 4px;
+    }
+
+    /* Controls */
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin: 28px 0;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      font-family: 'Crimson Pro', serif;
+      font-size: 0.95rem;
+      border: none;
+      border-radius: 100px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .btn-primary {
+      background: var(--accent-warm);
+      color: var(--bg-deep);
+      box-shadow: 0 6px 24px var(--glow-warm);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 32px var(--glow-warm);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text-soft);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--accent-warm);
+      color: var(--accent-warm);
+    }
+
+    .hint-text {
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-style: italic;
+      margin: 14px 0 28px;
+    }
+
+    /* Timeline */
+    .timeline {
+      position: relative;
+      padding-left: 28px;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 5px;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: linear-gradient(180deg, 
+        var(--accent-warm) 0%, 
+        var(--accent-teal) 50%, 
+        var(--accent-sand) 100%
+      );
+      opacity: 0.25;
+    }
+
+    /* Day card */
+    .day-card {
+      position: relative;
+      margin-bottom: 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      backdrop-filter: blur(20px);
+      transition: all 0.3s ease;
+      overflow: hidden;
+    }
+
+    .day-card::before {
+      content: '';
+      position: absolute;
+      left: -23px;
+      top: 28px;
+      width: 10px;
+      height: 10px;
+      background: var(--bg-deep);
+      border: 2px solid var(--accent-slate);
+      border-radius: 50%;
+      z-index: 1;
+      transition: all 0.3s ease;
+    }
+
+    .day-card.unlocked::before {
+      background: var(--accent-teal);
+      border-color: var(--accent-teal);
+      box-shadow: 0 0 8px rgba(126, 200, 200, 0.5);
+    }
+
+    .day-card:hover {
+      transform: translateX(6px);
+      border-color: rgba(232, 168, 124, 0.25);
+    }
+
+    .day-card.locked {
+      opacity: 0.5;
+    }
+
+    .day-card.locked:hover {
+      transform: none;
+    }
+
+    /* Card header - clickable */
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 24px;
+      cursor: pointer;
+    }
+
+    .day-date {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--accent-sand);
+      letter-spacing: 0.04em;
+      margin-bottom: 4px;
+    }
+
+    .day-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 4px;
+    }
+
+    .day-theme {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    .status-chip {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 10px;
+      background: rgba(126, 200, 200, 0.1);
+      border: 1px solid rgba(126, 200, 200, 0.25);
+      border-radius: 100px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--accent-teal);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .status-chip.locked {
+      background: rgba(148, 163, 184, 0.08);
+      border-color: rgba(148, 163, 184, 0.2);
+      color: var(--accent-slate);
+    }
+
+    .status-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--accent-teal);
+    }
+
+    .status-chip.locked .status-dot {
+      background: var(--accent-slate);
+    }
+
+    /* Expandable content */
+    .card-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease, padding 0.3s ease;
+    }
+
+    .card-body.expanded {
+      max-height: 1200px;
+    }
+
+    .card-body-inner {
+      padding: 0 24px 24px;
+    }
+
+    .expand-indicator {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      transition: transform 0.3s ease;
+    }
+
+    .day-card.expanded .expand-indicator {
+      transform: rotate(180deg);
+    }
+
+    /* Story section */
+    .story-section {
+      margin-bottom: 20px;
+      padding: 16px;
+      background: rgba(232, 168, 124, 0.05);
+      border-radius: 10px;
+      border-left: 3px solid var(--accent-warm);
+    }
+
+    .story-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--accent-warm);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 8px;
+    }
+
+    .story-text {
+      font-size: 0.95rem;
+      color: var(--text-soft);
+      font-style: italic;
+      line-height: 1.8;
+    }
+
+    /* Itinerary list */
+    .itinerary-section {
+      margin-bottom: 20px;
+    }
+
+    .itinerary-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 12px;
+    }
+
+    .itinerary-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px dashed var(--border-subtle);
+      font-size: 0.88rem;
+      color: var(--text-soft);
+    }
+
+    .itinerary-item:last-child {
+      border-bottom: none;
+    }
+
+    .itinerary-time {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--accent-sand);
+      min-width: 60px;
+    }
+
+    .itinerary-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--accent-teal);
+      border-radius: 50%;
+      margin-top: 6px;
+      flex-shrink: 0;
+    }
+
+    /* Hotel section */
+    .hotel-section {
+      padding: 20px;
+      background: rgba(126, 200, 200, 0.05);
+      border-radius: 12px;
+      margin-top: 16px;
+    }
+
+    .hotel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .hotel-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 6px;
+    }
+
+    .hotel-name {
+      font-size: 1rem;
+      color: var(--accent-warm);
+      margin-bottom: 4px;
+    }
+
+    .hotel-location {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .hotel-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+
+    .hotel-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      background: rgba(232, 168, 124, 0.1);
+      border: 1px solid rgba(232, 168, 124, 0.25);
+      border-radius: 100px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--accent-warm);
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .hotel-btn:hover {
+      background: rgba(232, 168, 124, 0.2);
+      transform: translateY(-1px);
+    }
+
+    .hotel-btn.secondary {
+      background: transparent;
+      border-color: var(--border-subtle);
+      color: var(--text-soft);
+    }
+
+    .hotel-btn.secondary:hover {
+      border-color: var(--accent-teal);
+      color: var(--accent-teal);
+    }
+
+    /* Room preference */
+    .room-pref {
+      margin-top: 12px;
+      padding: 12px;
+      background: rgba(126, 200, 200, 0.08);
+      border-radius: 8px;
+      font-size: 0.8rem;
+    }
+
+    .room-pref-label {
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .room-pref-input {
+      width: 100%;
+      padding: 8px 12px;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      color: var(--text-main);
+      font-family: inherit;
+      font-size: 0.85rem;
+      resize: none;
+    }
+
+    .room-pref-input:focus {
+      outline: none;
+      border-color: var(--accent-teal);
+    }
+
+    .room-pref-saved {
+      display: none;
+      align-items: center;
+      gap: 6px;
+      margin-top: 8px;
+      font-size: 0.75rem;
+      color: var(--accent-teal);
+    }
+
+    .room-pref-saved.show {
+      display: flex;
+    }
+
+    /* Locked overlay */
+    .locked-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(10, 10, 15, 0.95);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      border-radius: 14px;
+      backdrop-filter: blur(6px);
+      z-index: 10;
+    }
+
+    .lock-icon { font-size: 1.8rem; opacity: 0.5; }
+    .lock-text { font-size: 0.85rem; color: var(--text-muted); text-align: center; }
+
+    /* Cards grid */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .cards-grid .day-card { margin-bottom: 0; }
+    .cards-grid .day-card::before { display: none; }
+
+    /* Placeholder */
+    .placeholder {
+      text-align: center;
+      padding: 50px 20px;
+      color: var(--text-muted);
+    }
+
+    .placeholder-icon {
+      font-size: 2.5rem;
+      margin-bottom: 14px;
+      opacity: 0.4;
+    }
+
+    /* Footer */
+    .footer-note {
+      text-align: center;
+      margin-top: 50px;
+      padding: 24px;
+      font-style: italic;
+      color: var(--text-muted);
+      font-size: 0.88rem;
+    }
+
+    /* Modal for hotel preview */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 1000;
+      display: none;
+      align-items: center;
       justify-content: center;
       padding: 20px;
     }
 
-    .app {
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-content {
       width: 100%;
-      max-width: 960px;
-      background: rgba(15, 23, 42, 0.95);
-      border-radius: 24px;
-      border: 1px solid rgba(148, 163, 184, 0.18);
-      box-shadow:
-        0 20px 60px rgba(15, 23, 42, 0.8),
-        0 0 0 1px rgba(15, 23, 42, 0.9);
-      padding: 22px 22px 26px;
-      backdrop-filter: blur(20px);
-    }
-
-    header {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-bottom: 18px;
-    }
-
-    header h1 {
-      font-size: 1.5rem;
-      letter-spacing: 0.03em;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin: 0;
-    }
-
-    header h1 span.badge {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.15em;
-      background: linear-gradient(
-        120deg,
-        rgba(248, 250, 252, 0.06),
-        rgba(249, 115, 22, 0.22)
-      );
-      border-radius: 999px;
-      padding: 3px 10px;
-      border: 1px solid rgba(249, 115, 22, 0.55);
-      color: #fed7aa;
-    }
-
-    header p {
-      margin: 0;
-      font-size: 0.9rem;
-      color: var(--text-sub);
-    }
-
-    .meta-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 6px;
-      font-size: 0.78rem;
-      color: #cbd5f5;
-    }
-
-    .meta-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 4px 9px;
-      border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.38);
-      background: radial-gradient(
-        circle at top left,
-        rgba(129, 140, 248, 0.35),
-        rgba(15, 23, 42, 0.9)
-      );
-    }
-
-    .meta-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 999px;
-      background: var(--accent);
-      box-shadow: 0 0 10px rgba(249, 115, 22, 0.8);
-    }
-
-    .mode-banner {
-      margin: 8px 0 16px;
-      padding: 10px 12px;
+      max-width: 900px;
+      max-height: 90vh;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
       border-radius: 16px;
-      border: 1px solid rgba(148, 163, 184, 0.4);
-      background: radial-gradient(
-        circle at top left,
-        rgba(248, 250, 252, 0.05),
-        rgba(15, 23, 42, 0.95)
-      );
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      font-size: 0.86rem;
-    }
-
-    .mode-badge {
-      padding: 4px 10px;
-      border-radius: 999px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      border: 1px solid var(--accent);
-      color: #fed7aa;
-      background: var(--accent-soft);
-    }
-
-    .today-text {
-      font-weight: 500;
-      color: #e5e7eb;
-    }
-
-    .controls {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 12px;
-      margin-top: 4px;
-    }
-
-    .btn {
-      border-radius: 999px;
-      border: none;
-      padding: 9px 16px;
-      font-size: 0.9rem;
-      font-weight: 500;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: linear-gradient(120deg, #f97316, #fb923c);
-      color: #111827;
-      box-shadow:
-        0 10px 30px rgba(248, 113, 22, 0.65),
-        0 0 0 1px rgba(15, 23, 42, 0.8);
-      transition: transform 0.08s ease, box-shadow 0.08s ease,
-        filter 0.08s ease;
-    }
-
-    .btn span.icon {
-      font-size: 1.05rem;
-    }
-
-    .btn.secondary {
-      background: transparent;
-      border: 1px solid rgba(148, 163, 184, 0.7);
-      color: #e5e7eb;
-      box-shadow: none;
-      padding: 8px 13px;
-    }
-
-    .btn:hover {
-      filter: brightness(1.02);
-      transform: translateY(-1px);
-      box-shadow:
-        0 14px 35px rgba(248, 113, 22, 0.85),
-        0 0 0 1px rgba(15, 23, 42, 0.9);
-    }
-
-    .btn.secondary:hover {
-      box-shadow: 0 8px 25px rgba(15, 23, 42, 0.9);
-    }
-
-    .btn:active {
-      transform: translateY(0);
-      box-shadow:
-        0 8px 22px rgba(15, 23, 42, 0.9),
-        0 0 0 1px rgba(15, 23, 42, 0.9);
-    }
-
-    .hint {
-      font-size: 0.78rem;
-      color: var(--text-sub);
-    }
-
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
-      gap: 12px;
-      margin-top: 12px;
-    }
-
-    .card {
-      position: relative;
-      border-radius: 18px;
-      border: 1px solid var(--border-soft);
-      background: radial-gradient(
-        circle at top left,
-        rgba(15, 23, 42, 0.9),
-        rgba(2, 6, 23, 0.98)
-      );
-      padding: 14px 14px 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
       overflow: hidden;
-      cursor: pointer;
-    }
-
-    .card::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(
-        circle at top left,
-        rgba(249, 115, 22, 0.12),
-        transparent
-      );
-      pointer-events: none;
-    }
-
-    .card-header-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 8px;
-    }
-
-    .day-label {
-      font-size: 0.86rem;
-      font-weight: 600;
-      color: #e5e7eb;
-    }
-
-    .day-theme {
-      font-size: 0.8rem;
-      color: var(--text-sub);
-    }
-
-    .chip {
-      font-size: 0.72rem;
-      border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.6);
-      padding: 3px 8px;
-      color: #a5b4fc;
-      background: rgba(15, 23, 42, 0.9);
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .chip-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 999px;
-      background: #22c55e;
-      box-shadow: 0 0 8px rgba(34, 197, 94, 0.8);
-    }
-
-    .chip.locked {
-      color: var(--lock);
-      border-color: rgba(75, 85, 99, 0.9);
-    }
-
-    .chip.locked .chip-dot {
-      background: var(--lock);
-      box-shadow: none;
-    }
-
-    .content {
-      margin-top: 5px;
-      font-size: 0.8rem;
-      line-height: 1.5;
-      color: var(--text-main);
-      white-space: pre-line;
-    }
-
-    .locked-overlay {
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(
-        circle at top,
-        rgba(15, 23, 42, 0.95),
-        rgba(15, 23, 42, 0.98)
-      );
       display: flex;
       flex-direction: column;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
       align-items: center;
-      justify-content: center;
-      gap: 6px;
-      color: var(--lock);
-      font-size: 0.82rem;
-      pointer-events: none;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-subtle);
     }
 
-    .locked-overlay span.lock-icon {
-      font-size: 1.6rem;
+    .modal-title {
+      font-size: 1rem;
+      color: var(--text-main);
     }
 
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px 8px;
+      line-height: 1;
+    }
+
+    .modal-close:hover {
+      color: var(--accent-warm);
+    }
+
+    .modal-body {
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .modal-iframe {
+      width: 100%;
+      height: 70vh;
+      border: none;
+    }
+
+    .modal-footer {
+      padding: 16px 20px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .modal-room-input {
+      width: 100%;
+      padding: 10px 14px;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      color: var(--text-main);
+      font-family: inherit;
+      font-size: 0.9rem;
+    }
+
+    .modal-room-input:focus {
+      outline: none;
+      border-color: var(--accent-teal);
+    }
+
+    .modal-room-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .modal-save-btn {
+      margin-top: 10px;
+      padding: 10px 20px;
+      background: var(--accent-warm);
+      color: var(--bg-deep);
+      border: none;
+      border-radius: 100px;
+      font-family: inherit;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .modal-save-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px var(--glow-warm);
+    }
+
+    /* Responsive */
     @media (max-width: 640px) {
-      .app {
-        padding: 18px 16px 22px;
-        border-radius: 18px;
-      }
-      header h1 {
-        font-size: 1.25rem;
-      }
-      .mode-banner {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      .controls {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      .cards {
-        grid-template-columns: 1fr;
-      }
+      .container { padding: 24px 16px 60px; }
+      .hero { padding: 32px 16px; }
+      .info-banner { gap: 20px; }
+      .timeline { padding-left: 22px; }
+      .card-header { flex-direction: column; gap: 10px; }
+      .countdown { gap: 12px; }
+      .countdown-num { font-size: 1.4rem; }
     }
+
+    /* Animations */
+    .fade-in {
+      animation: fadeSlideUp 0.5s ease forwards;
+      opacity: 0;
+    }
+
+    .stagger-1 { animation-delay: 0.05s; }
+    .stagger-2 { animation-delay: 0.1s; }
+    .stagger-3 { animation-delay: 0.15s; }
+    .stagger-4 { animation-delay: 0.2s; }
+    .stagger-5 { animation-delay: 0.25s; }
   </style>
 </head>
 <body>
-  <div class="app">
-    <header>
-      <h1>
-        Yunnan Romantic Journey
-        <span class="badge">Interactive · Jerry &amp; Partner</span>
-      </h1>
-      <p>Before departure: trip “blind box”. After departure: auto-unlocking daily story. ✨</p>
-      <div class="meta-row">
-        <div class="meta-chip">
-          <span class="meta-dot"></span>
-          <span>Trip dates: 2025-12-21 → 2026-01-03</span>
-        </div>
-        <div class="meta-chip">
-          <span>Route: Dali · Lugu Lake · Lijiang · Shangri-La · Feilai Temple</span>
-        </div>
+  <div class="bg-layer"></div>
+  <div class="stars-layer" id="stars"></div>
+
+  <div class="container">
+    <header class="hero">
+      <h1>Yunnan Journey</h1>
+      <p class="hero-subtitle">A blind-box trip through mountains, lakes, and snow</p>
+      <div class="hero-names">
+        <span>Jerry</span>
+        <span class="dot"></span>
+        <span>Kat</span>
       </div>
+      
+      <div class="route-ribbon" id="routeRibbon"></div>
     </header>
 
-    <section id="modeBanner" class="mode-banner">
-      <div>
-        <div class="today-text" id="todayText"></div>
-        <div id="modeText" style="margin-top: 4px;"></div>
+    <section class="info-banner">
+      <div class="info-item">
+        <div class="info-label">Dates</div>
+        <div class="info-value">Dec 21, 2025 → Jan 3, 2026</div>
       </div>
-      <div class="mode-badge" id="modeBadge"></div>
+      <div class="info-item">
+        <div class="info-label">Duration</div>
+        <div class="info-value">14 days</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">Highlight</div>
+        <div class="info-value">New Year's Eve at Meili</div>
+      </div>
     </section>
 
-    <section class="controls">
-      <div>
-        <button id="randomBtn" class="btn">
-          <span class="icon">🎲</span>
-          <span>Pick 3 random days</span>
-        </button>
-        <button id="resetBtn" class="btn secondary" style="display:none;">
-          Reset picks
-        </button>
-      </div>
-      <div class="hint" id="hintText"></div>
+    <section class="mode-section" id="modeSection">
+      <div class="mode-badge" id="modeBadge">Blind Box</div>
+      <div class="mode-title" id="modeTitle">Today: <span id="todayDate"></span></div>
+      <div class="mode-desc" id="modeDesc">Pick 3 random days to preview. The rest stays a surprise.</div>
+      <div class="countdown" id="countdown"></div>
     </section>
 
-    <section id="cards" class="cards"></section>
+    <section class="controls" id="controls">
+      <button class="btn btn-primary" id="randomBtn">Pick 3 Random Days</button>
+      <button class="btn btn-secondary" id="resetBtn" style="display: none;">Reset</button>
+    </section>
+
+    <p class="hint-text" id="hintText">Click above to reveal three days from your journey</p>
+
+    <section id="cardsContainer"></section>
+
+    <footer class="footer-note">
+      <p>See you in Yunnan.</p>
+    </footer>
   </div>
 
-  <!-- All logic + Firebase (v9) in one ES module -->
-  <script type="module">
-    // ==========================
-    // 0. Firebase setup (fill your own config)
-    // ==========================
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import {
-      getDatabase,
-      ref,
-      push,
-      serverTimestamp
-    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+  <!-- Hotel preview modal -->
+  <div class="modal-overlay" id="hotelModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title" id="modalTitle">Hotel Details</div>
+        <button class="modal-close" id="modalClose">×</button>
+      </div>
+      <div class="modal-body">
+        <iframe class="modal-iframe" id="modalIframe" src=""></iframe>
+      </div>
+      <div class="modal-footer">
+        <div class="modal-room-label">Which room catches your eye? Note it here:</div>
+        <input type="text" class="modal-room-input" id="modalRoomInput" placeholder="e.g. Mountain View Suite, Lakeside Room...">
+        <button class="modal-save-btn" id="modalSaveBtn">Save Preference</button>
+      </div>
+    </div>
+  </div>
 
-    // TODO: replace with your Firebase project config
+  <script type="module">
+    // Firebase
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getDatabase, ref, push, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+
     const firebaseConfig = {
-    apiKey: "AIzaSyBKL-VoS_lDspkv0fEuCNA-_36raSGQ0HA",
-    authDomain: "yunnan-jounery.firebaseapp.com",
-    databaseURL: "https://yunnan-jounery-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId: "yunnan-jounery",
-    storageBucket: "yunnan-jounery.firebasestorage.app",
-    messagingSenderId: "213115475804",
-    appId: "1:213115475804:web:946336958f101d4096d399",
-    measurementId: "G-6Q9XCTY571"
+      apiKey: "AIzaSyBKL-VoS_lDspkv0fEuCNA-_36raSGQ0HA",
+      authDomain: "yunnan-jounery.firebaseapp.com",
+      databaseURL: "https://yunnan-jounery-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "yunnan-jounery",
+      storageBucket: "yunnan-jounery.firebasestorage.app",
+      messagingSenderId: "213115475804",
+      appId: "1:213115475804:web:946336958f101d4096d399"
     };
 
     const app = initializeApp(firebaseConfig);
@@ -420,403 +982,648 @@
 
     function logEvent(eventType, payload = {}) {
       try {
-        const eventsRef = ref(db, "tripEvents");
-        push(eventsRef, {
+        push(ref(db, "tripEvents"), {
           type: eventType,
           payload,
-          ts: serverTimestamp()
+          ts: serverTimestamp(),
+          localTime: new Date().toISOString()
         });
-      } catch (e) {
-        // Fail silently on logging errors
-        console.warn("Firebase logEvent failed:", e);
-      }
+      } catch (e) { console.warn("Log failed:", e); }
     }
 
-    // ==========================
-    // 1. Itinerary data
-    // ==========================
-
+    // Itinerary with stories
     const itinerary = [
       {
         id: 1,
         date: "2025-12-21",
-        label: "Day 1 · Dec 21 · Shenzhen → Kunming → Dali",
-        theme: "First night in Dali 🌙",
-        content: `• SZ → Kunming ✈️ HU7767 06:55–09:30
-• Airport → Kunming Railway Station → high-speed train to Dali 🚄
-• Check-in: guesthouse inside Dali Old Town
-• Skip main street, go to “Bedsheet Factory” art zone: coffee, books, quiet corners
-• Night walk on Renmin Road, slow start of the trip`
+        label: "Day 1 · Dec 21",
+        route: "Shenzhen → Kunming → Dali",
+        theme: "First night in Dali",
+        story: "The journey begins before dawn. As the plane lifts off from Shenzhen, the first chapter of our Yunnan story starts. By evening, we'll be wandering the quiet lanes of Dali Old Town, far from the tourist crowds.",
+        schedule: [
+          { time: "06:55", text: "Flight HU7767 departs Shenzhen" },
+          { time: "09:30", text: "Arrive Kunming, transfer to railway station" },
+          { time: "Afternoon", text: "High-speed train through mountains to Dali" },
+          { time: "Evening", text: "Check in, explore 'Bedsheet Factory' art zone" },
+          { time: "Night", text: "Slow walk on Renmin Road" }
+        ],
+        hotel: { name: "Wolan Yinshe (卧岚隐奢)", location: "Dali Old Town", link: "https://hk.trip.com/hotels/detail/?hotelId=131959162&checkIn=2025-12-21&checkOut=2025-12-22&locale=zh-HK" },
+        protected: false
       },
       {
         id: 2,
         date: "2025-12-22",
-        label: "Day 2 · Dec 22 · Dali · Erhai loop",
-        theme: "Private blue of Erhai 💙",
-        content: `• Car (not e-scooter in winter) → focus on west side eco-corridor
-• Morning: Caicun or Longkan pier, sunrise + red cypress
-• Stop at “Bridge” & “Couple Trees” for photos
-• Lunch in Xizhou: Xizhou baba + simple local dishes
-• Afternoon: coffee by the lake near Wenbi Village / Ideal Town
-• Stay for Erhai sunset, back to Old Town for dinner`
+        label: "Day 2 · Dec 22",
+        route: "Dali · Erhai Loop",
+        theme: "The private blue of Erhai",
+        story: "Today belongs to Erhai Lake. We'll chase the morning light at Caicun pier, stop at those famous couple trees, and end the day watching the sun sink into the lake — just the two of us.",
+        schedule: [
+          { time: "Sunrise", text: "Caicun or Longkan pier — red cypress & first light" },
+          { time: "Morning", text: "West shore eco-corridor drive" },
+          { time: "Noon", text: "Xizhou village lunch: local baba + simple dishes" },
+          { time: "Afternoon", text: "Lakeside café near Wenbi Village" },
+          { time: "Sunset", text: "Watch the colors change over Erhai" }
+        ],
+        hotel: { name: "Wolan Yinshe (卧岚隐奢)", location: "Dali Old Town", link: "https://hk.trip.com/hotels/detail/?hotelId=131959162&checkIn=2025-12-22&checkOut=2025-12-23&locale=zh-HK" },
+        protected: false
       },
       {
         id: 3,
         date: "2025-12-23",
-        label: "Day 3 · Dec 23 · Dali · Handcraft & Cangshan",
-        theme: "Indigo dye & mountain view 🌀",
-        content: `• Morning: private Bai tie-dye workshop near Xizhou
-• Make a pair of couple coasters / small scarves as trip memory
-• Lunch: simple local food in the village
-• Afternoon: Jizhao Nunnery – flowers, garden, vegetarian set
-• Late afternoon: Gantong cable car to mid-level viewpoint
-• View over Dali plain + Erhai at sunset`
+        label: "Day 3 · Dec 23",
+        route: "Dali → Shuanglang",
+        theme: "Tie-dye & mountain view",
+        story: "We'll get our hands dirty today — literally. At a Bai village workshop, we'll make something together that'll outlast this trip. Then, a cable car ride up Cangshan for one last sweeping view before we move to Shuanglang.",
+        schedule: [
+          { time: "Morning", text: "Private Bai tie-dye workshop near Xizhou" },
+          { time: "", text: "Make matching coasters — our trip keepsake" },
+          { time: "Noon", text: "Simple village lunch" },
+          { time: "Afternoon", text: "Jizhao Nunnery: garden & vegetarian set" },
+          { time: "Evening", text: "Gantong cable car up Cangshan, then drive to Shuanglang" }
+        ],
+        hotel: { name: "Banyue Tuolan Lake View (半月拖蓝)", location: "Erhai · Shuanglang", link: "https://hk.trip.com/hotels/detail/?hotelId=1922343&checkIn=2025-12-23&checkOut=2025-12-24&locale=zh-HK" },
+        protected: false
       },
       {
         id: 4,
         date: "2025-12-24",
-        label: "Day 4 · Dec 24 · Dali → Lugu Lake",
-        theme: "Road to the matriarchal lake ✨",
-        content: `• Tourist bus / charter car to Lugu Lake (5–6 h, mountain road)
-• Check-in: lake-view guesthouse in Lige or Daluoshui
-• Short walk by the lakeshore, get used to the pace
-• If available: join Mosuo bonfire night, songs + round dance 🔥`
+        label: "Day 4 · Dec 24",
+        route: "Shuanglang → Lugu Lake",
+        theme: "Road to the matriarchal lake",
+        story: "A long mountain road takes us deeper into Yunnan, to Lugu Lake — home of the Mosuo people and their walking marriages. If we're lucky, there'll be a bonfire tonight under stars we've never seen.",
+        schedule: [
+          { time: "Morning", text: "Leave Shuanglang, begin the 5-6 hour drive" },
+          { time: "", text: "Wind through mountain roads and small villages" },
+          { time: "Afternoon", text: "Arrive Lugu Lake, check into lakeside guesthouse" },
+          { time: "Evening", text: "Short lakeside walk to settle in" },
+          { time: "Night", text: "Mosuo bonfire if available — songs & round dance" }
+        ],
+        hotel: { name: "Xujiu Shanhai (叙旧山海)", location: "Lugu Lake", link: "https://hk.trip.com/hotels/detail/?hotelId=91407674&checkIn=2025-12-24&checkOut=2025-12-25&locale=zh-HK" },
+        protected: false
       },
       {
         id: 5,
         date: "2025-12-25",
-        label: "Day 5 · Dec 25 · Lugu Lake loop",
-        theme: "Clouds on the water ☁️",
-        content: `• Car loop: Lige view deck → Nisai Village → Lovers’ Tree → Goddess Bay
-• Lunch at Goddess Bay or Zhao family bay
-• Afternoon: Walking Marriage Bridge + Caohai
-• Wooden “pig trough boat” to the lake center, feed seagulls 🛶
-• Quiet sunset stop at a less-crowded viewpoint`
+        label: "Day 5 · Dec 25",
+        route: "Lugu Lake Loop",
+        theme: "Clouds on the water",
+        story: "Christmas at a lake so clear you can see the sky in it. We'll drift in a wooden pig-trough boat, feed the seagulls, and find our own secret spot to watch the day end.",
+        schedule: [
+          { time: "Morning", text: "Car loop: Lige deck → Nisai → Lovers' Tree" },
+          { time: "Noon", text: "Lunch at Goddess Bay" },
+          { time: "Afternoon", text: "Walking Marriage Bridge + Caohai wetland" },
+          { time: "", text: "Pig-trough boat ride, feed the seagulls" },
+          { time: "Sunset", text: "Find a quiet viewpoint, just us" }
+        ],
+        hotel: { name: "Qianshanji (千山继)", location: "Lugu Lake", link: "https://hk.trip.com/hotels/detail/?hotelId=90810005&checkIn=2025-12-25&checkOut=2025-12-26&locale=zh-HK" },
+        protected: false
       },
       {
         id: 6,
         date: "2025-12-26",
-        label: "Day 6 · Dec 26 · Lugu Lake → Lijiang",
-        theme: "Soft time in Shuhe 🏘️",
-        content: `• Morning drive back to Lijiang (about 4 h)
-• Skip busy Dayan, check in at a guesthouse in Shuhe Old Town
-• Terrace café with Yulong Snow Mountain view ☕️
-• Evening walk in stone alleys, listen to the stream`
+        label: "Day 6 · Dec 26",
+        route: "Lugu Lake → Lijiang",
+        theme: "Slow time in Shuhe",
+        story: "We leave the lake behind and head to Lijiang — but not the busy ancient town everyone knows. Shuhe is quieter, older, with streams running through stone streets. A place to catch our breath.",
+        schedule: [
+          { time: "Morning", text: "4-hour drive back to Lijiang" },
+          { time: "Afternoon", text: "Check in at Shuhe Old Town" },
+          { time: "", text: "Terrace café with Jade Dragon Snow Mountain view" },
+          { time: "Evening", text: "Wander stone alleys, listen to the streams" }
+        ],
+        hotel: { name: "Yueshi Yunyue Holiday Villa (阅时云约)", location: "Shuhe Old Town", link: "https://hk.trip.com/hotels/detail/?hotelId=126736658&checkIn=2025-12-26&checkOut=2025-12-27&locale=zh-HK" },
+        protected: false
       },
       {
         id: 7,
         date: "2025-12-27",
-        label: "Day 7 · Dec 27 · Lijiang · Snow mountain",
-        theme: "Snow peak & night lights 🏔️",
-        content: `• Option A: Yulong Snow Mountain day trip (cable car + Glacier Park + Blue Moon Valley)
-• Option B: Yuhu Village – stone village + quiet snow-mountain reflection
-• Light horse ride / short hike if you feel like it
-• Evening: dinner in Shuhe or Dayan Old Town
-• View over Old Town lights from a rooftop / hill café`
+        label: "Day 7 · Dec 27",
+        route: "Lijiang · Snow Mountain",
+        theme: "Snow peak & ancient town lights",
+        story: "Today we choose our own adventure: brave the Jade Dragon Snow Mountain cable car up to 4,680m, or find peace in Yuhu Village where Naxi stone houses reflect the snow peaks. Either way, we end with rooftop views of the ancient town lights.",
+        schedule: [
+          { time: "Option A", text: "Jade Dragon Snow Mountain day trip" },
+          { time: "", text: "Cable car + Glacier Park + Blue Moon Valley" },
+          { time: "Option B", text: "Yuhu Village — quiet stone village" },
+          { time: "", text: "Light horse ride or short hike" },
+          { time: "Evening", text: "Dinner in the old town, rooftop drinks" }
+        ],
+        hotel: { name: "Yueshi Yunyue Holiday Villa (阅时云约)", location: "Shuhe Old Town", link: "https://hk.trip.com/hotels/detail/?hotelId=126736658&checkIn=2025-12-27&checkOut=2025-12-28&locale=zh-HK" },
+        protected: false
       },
       {
         id: 8,
         date: "2025-12-28",
-        label: "Day 8 · Dec 28 · Lijiang → Shangri-La",
-        theme: "Tiger Leaping Gorge vibes 🐯",
-        content: `• Car / tourist bus Lijiang → Shangri-La (about 4 h)
-• Stop at Tiger Leaping Gorge viewing area, feel the Jinsha River power
-• Check-in: warm Tibetan-style inn in Dukezong Old Town
-• Slow pace, drink more water, adapt to altitude
-• Sunset at Guishan Park, spin the giant prayer wheel for wishes`
+        label: "Day 8 · Dec 28",
+        route: "Lijiang → Shangri-La",
+        theme: "Tiger Leaping Gorge",
+        story: "The road to Shangri-La is the journey. We'll stop at Tiger Leaping Gorge where the Jinsha River forces itself through a narrow canyon with terrifying beauty. Then up to the plateau, where the air is thinner and the sky is closer.",
+        schedule: [
+          { time: "Morning", text: "Begin 4-hour drive to Shangri-La" },
+          { time: "", text: "Stop at Tiger Leaping Gorge viewing area" },
+          { time: "Afternoon", text: "Arrive Dukezong Old Town" },
+          { time: "", text: "Take it slow, drink water, adjust to altitude" },
+          { time: "Sunset", text: "Guishan Park — spin the giant prayer wheel" }
+        ],
+        hotel: { name: "Roudan Lianshe Wabisabi (柔丹莲舍)", location: "Dukezong Old Town", link: "https://hk.trip.com/hotels/detail/?hotelId=129143679&checkIn=2025-12-28&checkOut=2025-12-30&locale=zh-HK" },
+        protected: false
       },
       {
         id: 9,
         date: "2025-12-29",
-        label: "Day 9 · Dec 29 · Shangri-La",
-        theme: "Monastery & grassland night 🔔",
-        content: `• Morning: Ganden Sumtseling Monastery (“Little Potala”) with local guide
-• Lunch: simple Tibetan set meal
-• Afternoon: Napa Lake winter grassland, birds, wide open view
-• Visit a nomad family if possible, try butter tea
-• If sky is clear: short night walk to see plateau stars`
+        label: "Day 9 · Dec 29",
+        route: "Shangri-La",
+        theme: "Monastery & grassland",
+        story: "Morning prayers at the 'Little Potala' monastery, afternoon wandering the winter grasslands of Napa Lake. If the sky stays clear, we'll step out for a short walk under more stars than we've ever seen.",
+        schedule: [
+          { time: "Morning", text: "Ganden Sumtseling Monastery with guide" },
+          { time: "Noon", text: "Simple Tibetan set meal" },
+          { time: "Afternoon", text: "Napa Lake winter grassland, birds, open views" },
+          { time: "", text: "Visit nomad family if possible, try butter tea" },
+          { time: "Night", text: "Short walk for plateau stars if clear" }
+        ],
+        hotel: { name: "Roudan Lianshe Wabisabi (柔丹莲舍)", location: "Dukezong Old Town", link: "https://hk.trip.com/hotels/detail/?hotelId=129143679&checkIn=2025-12-28&checkOut=2025-12-30&locale=zh-HK" },
+        protected: false
       },
       {
         id: 10,
         date: "2025-12-30",
-        label: "Day 10 · Dec 30 · Shangri-La",
-        theme: "Hidden lake or national park 💧",
-        content: `• If weather/road is good: charter car to “Bottomless Lake” – quiet alpine lake, light picnic
-• If not: switch to Pudacuo National Park (open parts)
-• Back to Dukezong Old Town, early rest for New Year’s Eve`
+        label: "Day 10 · Dec 30",
+        route: "Shangri-La → Napa Lake",
+        theme: "Hidden lake or national park",
+        story: "If the weather gods are kind, we'll find 'Bottomless Lake' — a secret alpine gem few tourists ever see. If not, Pudacuo National Park offers its own quiet magic. Tonight we rest at Napa Lake, saving our energy for tomorrow.",
+        schedule: [
+          { time: "Morning", text: "Check weather and road conditions" },
+          { time: "If clear", text: "Charter car to 'Bottomless Lake'" },
+          { time: "", text: "Quiet alpine lake, light picnic" },
+          { time: "Backup", text: "Pudacuo National Park (open sections)" },
+          { time: "Evening", text: "Move to Napa Lake area, early rest" }
+        ],
+        hotel: { name: "Banshan Tanye Manor (半山探野庄园)", location: "Napa Lake", link: "https://hk.trip.com/hotels/detail/?hotelId=109718533&checkIn=2025-12-30&checkOut=2025-12-31&locale=zh-HK" },
+        protected: false
       },
       {
         id: 11,
         date: "2025-12-31",
-        label: "Day 11 · Dec 31 · Shangri-La → Feilai Temple",
-        theme: "NYE under Meili stars 🌌",
-        content: `• Drive along Yunnan–Tibet road to Deqin / Feilai Temple
-• Photo stop at Jinsha River Big Bend
-• Check-in: hotel facing Meili (big window + heating / oxygen)
-• New Year’s Eve: hot drink, watch last sunset on Kawagarbo
-• If clear: starry sky above Meili, indoor stargazing night`
+        label: "Day 11 · Dec 31",
+        route: "Napa Lake → Feilai Temple",
+        theme: "New Year's Eve under Meili stars",
+        story: "The last day of the year. We drive the Yunnan-Tibet road to stand before Meili Snow Mountain — one of Tibetan Buddhism's most sacred peaks. As the old year fades, we'll watch the last sunset paint Kawagarbo gold.",
+        schedule: [
+          { time: "Morning", text: "Drive along Yunnan-Tibet road to Deqin" },
+          { time: "", text: "Photo stop at Jinsha River Big Bend" },
+          { time: "Afternoon", text: "Arrive Feilai Temple, check into mountain-view hotel" },
+          { time: "Sunset", text: "Watch last light of 2025 on Kawagarbo" },
+          { time: "Night", text: "New Year's Eve — starry sky above Meili" }
+        ],
+        hotel: { name: "Xueshan Xinglai (雪山醒来)", location: "Feilai Temple", link: "https://hk.trip.com/hotels/detail/?hotelId=100476519&checkIn=2025-12-31&checkOut=2026-01-01&locale=zh-HK" },
+        protected: true
       },
       {
         id: 12,
         date: "2026-01-01",
-        label: "Day 12 · Jan 1 · Feilai Temple & Mingyong Glacier",
-        theme: "First light of the year 🌅",
-        content: `• Early wake-up, quietly wait for possible “golden sunrise” on Meili
-• Ritual moment even if no perfect golden light
-• If energy is fine: drive to Mingyong Glacier, hike to view deck
-• Afternoon: back to hotel, slow New Year afternoon`
+        label: "Day 12 · Jan 1",
+        route: "Feilai Temple & Mingyong Glacier",
+        theme: "First light of the year",
+        story: "We wake before dawn, hoping. The 'golden sunrise' on Meili is rare — most pilgrims wait years to see it. But even without perfect light, being here for the first morning of the new year is the point.",
+        schedule: [
+          { time: "Dawn", text: "Early wake-up, wait for possible golden sunrise" },
+          { time: "", text: "Even without perfect light, this moment matters" },
+          { time: "Morning", text: "If energy allows: drive to Mingyong Glacier" },
+          { time: "", text: "Hike to the viewpoint" },
+          { time: "Afternoon", text: "Back to hotel, slow New Year's Day" }
+        ],
+        hotel: { name: "Xueshan Xinglai (雪山醒来)", location: "Feilai Temple", link: "https://hk.trip.com/hotels/detail/?hotelId=100476519&checkIn=2026-01-01&checkOut=2026-01-02&locale=zh-HK" },
+        protected: false
       },
       {
         id: 13,
         date: "2026-01-02",
-        label: "Day 13 · Jan 2 · Deqin → Shangri-La → Kunming",
-        theme: "Goodbye to the plateau 🧳",
-        content: `• Morning drive Deqin → Shangri-La (about 5 h)
-• Best: evening flight Shangri-La → Kunming ✈️
-• Backup: overnight bus Shangri-La → Kunming (less comfy)
-• Stay near Kunming Airport, long shower + good sleep`
+        label: "Day 13 · Jan 2",
+        route: "Deqin → Shangri-La → Kunming",
+        theme: "Leaving the plateau",
+        story: "The long journey back begins. Five hours down from Deqin, then a flight over the mountains to Kunming. The altitude will ease, the air will thicken, and Yunnan will slowly let us go.",
+        schedule: [
+          { time: "Morning", text: "5-hour drive Deqin → Shangri-La" },
+          { time: "17:25", text: "Flight Shangri-La → Kunming" },
+          { time: "22:04", text: "Arrive Kunming" },
+          { time: "Night", text: "Airport hotel, rest well" }
+        ],
+        hotel: { name: "Airport Area (TBD)", location: "Kunming", link: null },
+        protected: false
       },
       {
         id: 14,
         date: "2026-01-03",
-        label: "Day 14 · Jan 3 · Kunming → Shenzhen",
-        theme: "Back to daily life, with memories 📖",
-        content: `• Easy morning; if time allows: Green Lake Park + seagulls
-• Head to Kunming Changshui Airport
-• CA3558 Kunming → Shenzhen 13:15–15:15
-• Trip ends, but “Yunnan chapter” stays in both of your stories`
+        label: "Day 14 · Jan 3",
+        route: "Kunming → Shenzhen",
+        theme: "Back with memories",
+        story: "One last morning. If there's time, we'll visit Green Lake to see the red-billed gulls that migrate here every winter. Then the flight home, carrying 14 days of mountains, lakes, and snow inside us.",
+        schedule: [
+          { time: "Morning", text: "If time: Green Lake Park + seagulls" },
+          { time: "13:15", text: "CA3558 Kunming → Shenzhen" },
+          { time: "15:15", text: "Arrive home" },
+          { time: "", text: "Trip ends. Yunnan chapter stays." }
+        ],
+        hotel: null,
+        protected: false
       }
     ];
 
-    // ==========================
-    // 2. Date helpers
-    // ==========================
+    // Helpers
+    const STORAGE_KEY = "yn_trip_v4";
+    const ROOM_PREF_KEY = "yn_room_prefs";
 
-    const STORAGE_KEY_RANDOM = "yn_trip_random_days_v1";
-
-    function formatDateDisplay(date) {
-      const y = date.getFullYear();
-      const m = String(date.getMonth() + 1).padStart(2, "0");
-      const d = String(date.getDate()).padStart(2, "0");
-      return `${y}-${m}-${d}`;
-    }
-
-    function getTodayDateOnly() {
+    function getToday() {
       const now = new Date();
       return new Date(now.getFullYear(), now.getMonth(), now.getDate());
     }
 
-    const firstDate = new Date(itinerary[0].date);
-    const lastDate = new Date(itinerary[itinerary.length - 1].date);
+    const tripStart = new Date("2025-12-21");
+    const tripEnd = new Date("2026-01-03");
 
     function getMode() {
-      const today = getTodayDateOnly();
-      if (today < firstDate) return "pre";
-      if (today > lastDate) return "post";
+      const today = getToday();
+      if (today < tripStart) return "pre";
+      if (today > tripEnd) return "post";
       return "during";
     }
 
-    function loadRandomDays() {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY_RANDOM);
-        if (!raw) return [];
-        const arr = JSON.parse(raw);
-        if (!Array.isArray(arr)) return [];
-        return arr;
-      } catch (e) {
-        return [];
-      }
+    function formatDisplayDate(date) {
+      return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
     }
 
-    function saveRandomDays(ids) {
-      localStorage.setItem(STORAGE_KEY_RANDOM, JSON.stringify(ids));
+    function loadRandom() {
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } 
+      catch { return []; }
+    }
+    function saveRandom(ids) { localStorage.setItem(STORAGE_KEY, JSON.stringify(ids)); }
+    function clearRandom() { localStorage.removeItem(STORAGE_KEY); }
+
+    function loadRoomPrefs() {
+      try { return JSON.parse(localStorage.getItem(ROOM_PREF_KEY)) || {}; }
+      catch { return {}; }
+    }
+    function saveRoomPref(hotelId, pref) {
+      const prefs = loadRoomPrefs();
+      prefs[hotelId] = pref;
+      localStorage.setItem(ROOM_PREF_KEY, JSON.stringify(prefs));
     }
 
-    function resetRandomDays() {
-      localStorage.removeItem(STORAGE_KEY_RANDOM);
-    }
-
-    function pickRandomDistinctDays(n) {
-      const ids = itinerary.map((d) => d.id);
-      // shuffle
-      for (let i = ids.length - 1; i > 0; i--) {
+    function pickRandom(n) {
+      const available = itinerary.filter(d => !d.protected).map(d => d.id);
+      for (let i = available.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [ids[i], ids[j]] = [ids[j], ids[i]];
+        [available[i], available[j]] = [available[j], available[i]];
       }
-      return ids.slice(0, n);
+      return available.slice(0, n);
     }
 
-    // ==========================
-    // 3. DOM + render
-    // ==========================
+    function getDayDetails(id) {
+      const d = itinerary.find(x => x.id === id);
+      if (!d) return null;
+      return { id: d.id, date: d.date, label: d.label, theme: d.theme, hotel: d.hotel?.name };
+    }
 
-    const todayTextEl = document.getElementById("todayText");
-    const modeTextEl = document.getElementById("modeText");
+    // DOM
+    const todayDateEl = document.getElementById("todayDate");
     const modeBadgeEl = document.getElementById("modeBadge");
-    const cardsEl = document.getElementById("cards");
+    const modeDescEl = document.getElementById("modeDesc");
+    const countdownEl = document.getElementById("countdown");
+    const controlsEl = document.getElementById("controls");
     const randomBtn = document.getElementById("randomBtn");
     const resetBtn = document.getElementById("resetBtn");
     const hintTextEl = document.getElementById("hintText");
+    const cardsContainer = document.getElementById("cardsContainer");
+    const routeRibbon = document.getElementById("routeRibbon");
 
+    // Modal
+    const modal = document.getElementById("hotelModal");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalIframe = document.getElementById("modalIframe");
+    const modalClose = document.getElementById("modalClose");
+    const modalRoomInput = document.getElementById("modalRoomInput");
+    const modalSaveBtn = document.getElementById("modalSaveBtn");
+    let currentHotelId = null;
+
+    modalClose.onclick = () => { modal.classList.remove("active"); modalIframe.src = ""; };
+    modal.onclick = (e) => { if (e.target === modal) { modal.classList.remove("active"); modalIframe.src = ""; }};
+
+    modalSaveBtn.onclick = () => {
+      const pref = modalRoomInput.value.trim();
+      if (pref && currentHotelId) {
+        saveRoomPref(currentHotelId, pref);
+        logEvent("room_preference_saved", { hotelId: currentHotelId, preference: pref });
+        modal.classList.remove("active");
+        modalIframe.src = "";
+        render(); // refresh to show saved pref
+      }
+    };
+
+    function openHotelModal(hotel, dayId) {
+      currentHotelId = `day-${dayId}`;
+      modalTitle.textContent = hotel.name;
+      modalIframe.src = hotel.link;
+      const prefs = loadRoomPrefs();
+      modalRoomInput.value = prefs[currentHotelId] || "";
+      modal.classList.add("active");
+      logEvent("hotel_modal_opened", { dayId, hotelName: hotel.name });
+    }
+
+    // Stars
+    function createStars() {
+      const starsEl = document.getElementById("stars");
+      const types = [
+        { class: 'tiny', count: 60 },
+        { class: 'small', count: 40 },
+        { class: 'medium', count: 20 },
+        { class: 'bright', count: 8 }
+      ];
+      
+      types.forEach(type => {
+        for (let i = 0; i < type.count; i++) {
+          const star = document.createElement("div");
+          star.className = `star ${type.class}`;
+          star.style.left = Math.random() * 100 + "%";
+          star.style.top = Math.random() * 100 + "%";
+          star.style.animationDelay = Math.random() * 5 + "s";
+          starsEl.appendChild(star);
+        }
+      });
+
+      // Shooting stars
+      for (let i = 0; i < 3; i++) {
+        const shooter = document.createElement("div");
+        shooter.className = "shooting-star";
+        shooter.style.top = Math.random() * 40 + "%";
+        shooter.style.left = Math.random() * 30 + "%";
+        shooter.style.animationDelay = (i * 12 + Math.random() * 5) + "s";
+        starsEl.appendChild(shooter);
+      }
+    }
+
+    // Route ribbon animation
+    function animateRouteRibbon() {
+      const stops = ["Dali", "Erhai", "Lugu Lake", "Lijiang", "Shangri-La", "Meili"];
+      routeRibbon.innerHTML = "";
+      stops.forEach((stop, i) => {
+        const span = document.createElement("span");
+        span.className = "route-stop";
+        span.textContent = stop;
+        span.style.animationDelay = (1.2 + i * 0.15) + "s";
+        routeRibbon.appendChild(span);
+      });
+    }
+
+    // Countdown
+    function updateCountdown() {
+      const today = getToday();
+      const diff = tripStart - today;
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      
+      if (days > 0) {
+        countdownEl.innerHTML = `
+          <div class="countdown-item">
+            <div class="countdown-num">${days}</div>
+            <div class="countdown-label">days until departure</div>
+          </div>
+        `;
+      } else {
+        countdownEl.innerHTML = "";
+      }
+    }
+
+    // Card creation
+    function createCard(day, unlocked) {
+      const card = document.createElement("article");
+      card.className = `day-card ${unlocked ? "unlocked" : "locked"}`;
+      card.dataset.id = day.id;
+
+      const prefs = loadRoomPrefs();
+      const savedPref = prefs[`day-${day.id}`];
+
+      let scheduleHTML = "";
+      if (day.schedule) {
+        scheduleHTML = day.schedule.map(item => `
+          <div class="itinerary-item">
+            ${item.time ? `<div class="itinerary-time">${item.time}</div>` : '<div class="itinerary-time"></div>'}
+            <div class="itinerary-dot"></div>
+            <div>${item.text}</div>
+          </div>
+        `).join("");
+      }
+
+      let hotelHTML = "";
+      if (day.hotel && unlocked) {
+        hotelHTML = `
+          <div class="hotel-section">
+            <div class="hotel-header">
+              <div>
+                <div class="hotel-label">Tonight's Stay</div>
+                <div class="hotel-name">${day.hotel.name}</div>
+                <div class="hotel-location">${day.hotel.location}</div>
+              </div>
+            </div>
+            <div class="hotel-actions">
+              ${day.hotel.link ? `
+                <button class="hotel-btn" data-hotel='${JSON.stringify(day.hotel)}' data-day="${day.id}">Browse Rooms</button>
+                <a href="${day.hotel.link}" target="_blank" class="hotel-btn secondary">Open in New Tab</a>
+              ` : '<span style="font-size: 0.75rem; color: var(--text-muted);">Booking link TBD</span>'}
+            </div>
+            ${savedPref ? `
+              <div class="room-pref">
+                <div class="room-pref-label">Your preference:</div>
+                <div style="color: var(--accent-teal);">${savedPref}</div>
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }
+
+      card.innerHTML = `
+        <div class="card-header">
+          <div>
+            <div class="day-date">${day.date}</div>
+            <div class="day-title">${day.label}</div>
+            <div class="day-theme">${day.theme}</div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div class="status-chip ${unlocked ? "" : "locked"}">
+              <span class="status-dot"></span>
+              <span>${unlocked ? "Unlocked" : "Locked"}</span>
+            </div>
+            ${unlocked ? '<span class="expand-indicator">▼</span>' : ''}
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-body-inner">
+            ${day.story ? `
+              <div class="story-section">
+                <div class="story-label">The Story</div>
+                <div class="story-text">${day.story}</div>
+              </div>
+            ` : ''}
+            ${scheduleHTML ? `
+              <div class="itinerary-section">
+                <div class="itinerary-label">The Plan</div>
+                ${scheduleHTML}
+              </div>
+            ` : ''}
+            ${hotelHTML}
+          </div>
+        </div>
+        ${!unlocked ? `
+          <div class="locked-overlay">
+            <div class="lock-icon">🔒</div>
+            <div class="lock-text">This day unlocks when you arrive</div>
+          </div>
+        ` : ''}
+      `;
+
+      // Expand/collapse
+      if (unlocked) {
+        const header = card.querySelector('.card-header');
+        const body = card.querySelector('.card-body');
+        header.onclick = () => {
+          const isExpanded = body.classList.contains('expanded');
+          body.classList.toggle('expanded');
+          card.classList.toggle('expanded');
+          logEvent("card_toggled", { dayId: day.id, expanded: !isExpanded });
+        };
+      }
+
+      // Hotel browse button
+      const hotelBtn = card.querySelector('.hotel-btn[data-hotel]');
+      if (hotelBtn) {
+        hotelBtn.onclick = (e) => {
+          e.stopPropagation();
+          const hotel = JSON.parse(hotelBtn.dataset.hotel);
+          openHotelModal(hotel, hotelBtn.dataset.day);
+        };
+      }
+
+      return card;
+    }
+
+    // Render
     function render() {
       const mode = getMode();
-      const today = getTodayDateOnly();
-      todayTextEl.textContent = `Today: ${formatDateDisplay(today)}`;
+      const today = getToday();
+      
+      todayDateEl.textContent = formatDisplayDate(today);
+      updateCountdown();
 
       if (mode === "pre") {
-        modeBadgeEl.textContent = "Before trip · blind box mode";
-        modeTextEl.textContent =
-          "She can sneak peek 3 random days before the real journey starts. 🎁";
-        randomBtn.style.display = "inline-flex";
-        resetBtn.style.display = "inline-flex";
+        modeBadgeEl.textContent = "Blind Box Mode";
+        modeDescEl.textContent = "Pick 3 random days to preview. The rest stays a surprise.";
+        controlsEl.style.display = "flex";
         renderPreTrip();
       } else if (mode === "during") {
-        modeBadgeEl.textContent = "On the road · daily unlock";
-        modeTextEl.textContent =
-          "From Day 1 to today will auto-unlock; later days stay locked as surprises.";
-        randomBtn.style.display = "none";
-        resetBtn.style.display = "none";
+        modeBadgeEl.textContent = "On The Road";
+        modeDescEl.textContent = "Days unlock as you travel. Click any card to expand.";
+        controlsEl.style.display = "none";
         renderDuringTrip(today);
       } else {
-        modeBadgeEl.textContent = "After trip · memory mode";
-        modeTextEl.textContent =
-          "All days are unlocked now, like a small online travel diary. 📝";
-        randomBtn.style.display = "none";
-        resetBtn.style.display = "none";
+        modeBadgeEl.textContent = "Memory Mode";
+        modeDescEl.textContent = "All days unlocked. Your travel diary.";
+        controlsEl.style.display = "none";
         renderPostTrip();
       }
     }
 
     function renderPreTrip() {
-      const selectedIds = loadRandomDays();
-      cardsEl.innerHTML = "";
+      const selected = loadRandom();
+      cardsContainer.innerHTML = "";
 
-      if (!selectedIds.length) {
-        hintTextEl.textContent =
-          "Tip: click “Pick 3 random days” and let her draw a mini preview of the trip.";
+      if (!selected.length) {
+        hintTextEl.textContent = "Click above to reveal three days from your journey";
+        resetBtn.style.display = "none";
+        
+        const placeholder = document.createElement("div");
+        placeholder.className = "placeholder";
+        placeholder.innerHTML = `
+          <div class="placeholder-icon">📦</div>
+          <div class="placeholder-text">14 days waiting to be discovered</div>
+          <div class="placeholder-sub">Draw 3 to preview</div>
+        `;
+        cardsContainer.appendChild(placeholder);
         return;
       }
 
-      hintTextEl.textContent =
-        "3 days selected. You can reset and draw again if you want.";
+      hintTextEl.textContent = "3 days revealed. Click each card to see more.";
+      resetBtn.style.display = "inline-flex";
 
-      const selectedDays = itinerary
-        .filter((d) => selectedIds.includes(d.id))
-        .sort((a, b) => new Date(a.date) - new Date(b.date));
+      const wrapper = document.createElement("div");
+      wrapper.className = "cards-grid";
 
-      selectedDays.forEach((day) => {
-        cardsEl.appendChild(createCard(day, { unlocked: true }));
-      });
+      itinerary
+        .filter(d => selected.includes(d.id))
+        .sort((a, b) => new Date(a.date) - new Date(b.date))
+        .forEach((day, i) => {
+          const card = createCard(day, true);
+          card.classList.add("fade-in", `stagger-${i + 1}`);
+          wrapper.appendChild(card);
+        });
+
+      cardsContainer.appendChild(wrapper);
     }
 
     function renderDuringTrip(today) {
-      cardsEl.innerHTML = "";
-      hintTextEl.textContent =
-        "Green dot = unlocked; lock icon = future surprise.";
+      cardsContainer.innerHTML = "";
+      hintTextEl.textContent = "";
 
-      itinerary.forEach((day) => {
-        const dayDate = new Date(day.date);
-        const unlocked = dayDate <= today;
-        cardsEl.appendChild(createCard(day, { unlocked }));
+      const wrapper = document.createElement("div");
+      wrapper.className = "timeline";
+
+      itinerary.forEach((day, i) => {
+        const unlocked = new Date(day.date) <= today;
+        const card = createCard(day, unlocked);
+        card.classList.add("fade-in", `stagger-${Math.min(i + 1, 5)}`);
+        wrapper.appendChild(card);
       });
+
+      cardsContainer.appendChild(wrapper);
     }
 
     function renderPostTrip() {
-      cardsEl.innerHTML = "";
-      hintTextEl.textContent =
-        "All days unlocked. You can scroll through and replay the whole story anytime.";
+      cardsContainer.innerHTML = "";
+      hintTextEl.textContent = "";
 
-      itinerary.forEach((day) => {
-        cardsEl.appendChild(createCard(day, { unlocked: true }));
-      });
-    }
+      const wrapper = document.createElement("div");
+      wrapper.className = "timeline";
 
-    function createCard(day, options) {
-      const { unlocked } = options;
-      const card = document.createElement("article");
-      card.className = "card";
-      card.dataset.dayId = day.id;
-
-      const headerRow = document.createElement("div");
-      headerRow.className = "card-header-row";
-
-      const left = document.createElement("div");
-
-      const label = document.createElement("div");
-      label.className = "day-label";
-      label.textContent = day.label;
-
-      const theme = document.createElement("div");
-      theme.className = "day-theme";
-      theme.textContent = day.theme;
-
-      left.appendChild(label);
-      left.appendChild(theme);
-
-      const chip = document.createElement("div");
-      chip.className = "chip" + (unlocked ? "" : " locked");
-
-      const dot = document.createElement("div");
-      dot.className = "chip-dot";
-      chip.appendChild(dot);
-
-      const chipText = document.createElement("span");
-      chipText.textContent = unlocked ? "Unlocked" : "Locked (future day)";
-      chip.appendChild(chipText);
-
-      headerRow.appendChild(left);
-      headerRow.appendChild(chip);
-
-      const content = document.createElement("div");
-      content.className = "content";
-      content.textContent = day.content;
-
-      card.appendChild(headerRow);
-      card.appendChild(content);
-
-      if (!unlocked) {
-        const overlay = document.createElement("div");
-        overlay.className = "locked-overlay";
-        const icon = document.createElement("span");
-        icon.className = "lock-icon";
-        icon.textContent = "🔒";
-        const text = document.createElement("div");
-        text.textContent = "This day will unlock when you actually reach it.";
-        overlay.appendChild(icon);
-        overlay.appendChild(text);
-        card.appendChild(overlay);
-      }
-
-      card.addEventListener("click", () => {
-        logEvent("open_day_card", {
-          dayId: day.id,
-          date: day.date,
-          unlocked
-        });
+      itinerary.forEach((day, i) => {
+        const card = createCard(day, true);
+        card.classList.add("fade-in", `stagger-${Math.min(i + 1, 5)}`);
+        wrapper.appendChild(card);
       });
 
-      return card;
+      cardsContainer.appendChild(wrapper);
     }
 
-    // ==========================
-    // 4. Events
-    // ==========================
-
-    randomBtn.addEventListener("click", () => {
-      const ids = pickRandomDistinctDays(3);
-      saveRandomDays(ids);
-      logEvent("random_pick", { pickedIds: ids });
+    // Events
+    randomBtn.onclick = () => {
+      const ids = pickRandom(3);
+      saveRandom(ids);
+      logEvent("random_draw", { 
+        pickedIds: ids,
+        drawnDays: ids.map(getDayDetails),
+        summary: ids.map(getDayDetails).map(d => `${d.date}: ${d.theme}`).join(' | ')
+      });
       render();
-    });
+    };
 
-    resetBtn.addEventListener("click", () => {
-      resetRandomDays();
-      logEvent("reset_random_pick");
+    resetBtn.onclick = () => {
+      const prev = loadRandom();
+      clearRandom();
+      logEvent("reset_draw", { previousPicks: prev });
       render();
-    });
+    };
 
-    // initial render
-    logEvent("page_view", { tsLocal: Date.now() });
+    // Init
+    createStars();
+    animateRouteRibbon();
+    logEvent("page_load", { mode: getMode(), existingPicks: loadRandom() });
     render();
   </script>
 </body>

@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>...</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;1,400&family=Space+Mono&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      background: #0a0a0f;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Crimson Pro', Georgia, serif;
+      overflow: hidden;
+    }
+
+    /* Stars background */
+    .stars {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .star {
+      position: absolute;
+      background: #fff;
+      border-radius: 50%;
+      opacity: 0;
+      animation: twinkle 3s ease-in-out infinite;
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0; }
+      50% { opacity: 0.8; }
+    }
+
+    /* Main content */
+    .container {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 40px;
+      max-width: 600px;
+    }
+
+    .greeting {
+      font-size: 14px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #7ec8c8;
+      margin-bottom: 40px;
+      opacity: 0;
+      animation: fadeIn 1s ease forwards 0.5s;
+    }
+
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+
+    .typewriter-container {
+      min-height: 200px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .line {
+      font-size: 28px;
+      color: #f0ebe3;
+      line-height: 1.6;
+      margin: 8px 0;
+      opacity: 0;
+    }
+
+    .line.visible {
+      opacity: 1;
+    }
+
+    .line .cursor {
+      display: inline-block;
+      width: 2px;
+      height: 1em;
+      background: #e8a87c;
+      margin-left: 2px;
+      animation: blink 0.8s infinite;
+      vertical-align: text-bottom;
+    }
+
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0; }
+    }
+
+    .route {
+      font-size: 13px;
+      letter-spacing: 2px;
+      color: #c4a77d;
+      margin-top: 50px;
+      opacity: 0;
+    }
+
+    .route.visible {
+      animation: fadeIn 1s ease forwards;
+    }
+
+    .cta {
+      margin-top: 40px;
+      opacity: 0;
+    }
+
+    .cta.visible {
+      animation: fadeIn 1s ease forwards;
+    }
+
+    .cta a {
+      display: inline-block;
+      padding: 16px 48px;
+      background: linear-gradient(135deg, #e8a87c 0%, #c4a77d 100%);
+      color: #0a0a0f;
+      text-decoration: none;
+      font-size: 15px;
+      letter-spacing: 2px;
+      border-radius: 50px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .cta a:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(232, 168, 124, 0.3);
+    }
+
+    .signature {
+      margin-top: 60px;
+      font-size: 14px;
+      color: #4b5563;
+      font-style: italic;
+      opacity: 0;
+    }
+
+    .signature.visible {
+      animation: fadeIn 1s ease forwards;
+    }
+
+    /* Decorative elements */
+    .deco-top {
+      position: fixed;
+      top: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 14px;
+      letter-spacing: 12px;
+      color: rgba(232, 168, 124, 0.3);
+      opacity: 0;
+      animation: fadeIn 2s ease forwards 0.3s;
+    }
+
+    .deco-bottom {
+      position: fixed;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 18px;
+      letter-spacing: 16px;
+      color: rgba(126, 200, 200, 0.2);
+      opacity: 0;
+      animation: fadeIn 2s ease forwards 4s;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="stars" id="stars"></div>
+  
+  <div class="deco-top">✦ ✦ ✦</div>
+
+  <div class="container">
+    <div class="greeting">A message for Kat</div>
+    
+    <div class="typewriter-container">
+      <div class="line" id="line1"></div>
+      <div class="line" id="line2"></div>
+      <div class="line" id="line3"></div>
+    </div>
+
+    <div class="route" id="route">
+      Dali → Erhai → Lugu Lake → Lijiang → Shangri-La → Meili
+    </div>
+
+    <div class="cta" id="cta">
+      <a href="https://janeland.github.io/Yunnan-Journey/">Open</a>
+    </div>
+
+    <div class="signature" id="signature">— J</div>
+  </div>
+
+  <div class="deco-bottom">· · ·</div>
+
+  <script>
+    // Create stars
+    const starsContainer = document.getElementById('stars');
+    for (let i = 0; i < 80; i++) {
+      const star = document.createElement('div');
+      star.className = 'star';
+      star.style.left = Math.random() * 100 + '%';
+      star.style.top = Math.random() * 100 + '%';
+      star.style.width = (Math.random() * 2 + 1) + 'px';
+      star.style.height = star.style.width;
+      star.style.animationDelay = Math.random() * 3 + 's';
+      star.style.animationDuration = (Math.random() * 2 + 2) + 's';
+      starsContainer.appendChild(star);
+    }
+
+    // Typewriter effect
+    const lines = [
+      { el: document.getElementById('line1'), text: "Something has been updated." },
+      { el: document.getElementById('line2'), text: "The page you saw before?" },
+      { el: document.getElementById('line3'), text: "It's ready now." }
+    ];
+
+    const route = document.getElementById('route');
+    const cta = document.getElementById('cta');
+    const signature = document.getElementById('signature');
+
+    let currentLine = 0;
+    let currentChar = 0;
+    let isTyping = false;
+
+    function typeChar() {
+      if (currentLine >= lines.length) {
+        // All lines done, show remaining elements
+        setTimeout(() => route.classList.add('visible'), 300);
+        setTimeout(() => cta.classList.add('visible'), 800);
+        setTimeout(() => signature.classList.add('visible'), 1200);
+        return;
+      }
+
+      const line = lines[currentLine];
+      
+      if (!isTyping) {
+        line.el.classList.add('visible');
+        line.el.innerHTML = '<span class="cursor"></span>';
+        isTyping = true;
+      }
+
+      if (currentChar < line.text.length) {
+        const char = line.text[currentChar];
+        line.el.innerHTML = line.text.substring(0, currentChar + 1) + '<span class="cursor"></span>';
+        currentChar++;
+        
+        // Slower, more deliberate typing
+        const delay = char === '.' ? 600 : char === '?' ? 500 : char === ',' ? 300 : char === ' ' ? 150 : 100;
+        setTimeout(typeChar, delay);
+      } else {
+        // Line complete
+        line.el.innerHTML = line.text; // Remove cursor
+        currentLine++;
+        currentChar = 0;
+        isTyping = false;
+        setTimeout(typeChar, 600); // Pause between lines
+      }
+    }
+
+    // Start after a short delay
+    setTimeout(typeChar, 1500);
+  </script>
+
+</body>
+</html>

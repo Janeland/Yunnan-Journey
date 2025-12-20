@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Day 11 ⭐</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Inter:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      min-height: 100vh;
+      font-family: 'Cormorant Garamond', serif;
+      color: white;
+      overflow-x: hidden;
+      background: #0a0a12;
+    }
+    
+    /* Video/Image background */
+    .bg-image {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      background: 
+        linear-gradient(to bottom, 
+          rgba(10,10,18,0.3) 0%, 
+          rgba(10,10,18,0.1) 30%,
+          rgba(10,10,18,0.4) 70%,
+          rgba(10,10,18,0.95) 100%
+        ),
+        url('https://images.unsplash.com/photo-1519681393784-d120267933ba?w=1920') center/cover;
+    }
+    
+    /* Snow effect */
+    .snow {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+    
+    .snowflake {
+      position: absolute;
+      background: white;
+      border-radius: 50%;
+      opacity: 0.8;
+      animation: fall linear infinite;
+    }
+    
+    @keyframes fall {
+      0% {
+        transform: translateY(-10px) rotate(0deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.8;
+      }
+      90% {
+        opacity: 0.6;
+      }
+      100% {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+    
+    /* Glow effect */
+    .glow {
+      position: fixed;
+      top: 30%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(255,215,0,0.15) 0%, transparent 70%);
+      z-index: 1;
+      animation: pulse 4s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
+      50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.8; }
+    }
+    
+    /* Content */
+    .container {
+      position: relative;
+      z-index: 10;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      text-align: center;
+    }
+    
+    .reveal-badge {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.75rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: #ffd700;
+      margin-bottom: 30px;
+      opacity: 0;
+      animation: fadeUp 1s ease forwards 0.5s;
+    }
+    
+    .main-title {
+      font-size: clamp(2rem, 7vw, 4rem);
+      font-weight: 300;
+      letter-spacing: 0.02em;
+      margin-bottom: 20px;
+      opacity: 0;
+      animation: fadeUp 1.2s ease forwards 1s;
+    }
+    
+    .main-title .highlight {
+      display: block;
+      font-size: clamp(2.5rem, 9vw, 5rem);
+      font-weight: 500;
+      background: linear-gradient(135deg, #fff 0%, #ffd700 50%, #fff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-top: 10px;
+    }
+    
+    .location {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 50px;
+      opacity: 0;
+      animation: fadeUp 1s ease forwards 1.5s;
+    }
+    
+    .story {
+      max-width: 550px;
+      font-size: 1.2rem;
+      line-height: 2;
+      color: rgba(255,255,255,0.85);
+      margin-bottom: 40px;
+      opacity: 0;
+      animation: fadeUp 1s ease forwards 2s;
+    }
+    
+    .countdown-nye {
+      display: flex;
+      gap: 30px;
+      margin-bottom: 50px;
+      opacity: 0;
+      animation: fadeUp 1s ease forwards 2.5s;
+    }
+    
+    .nye-item {
+      text-align: center;
+    }
+    
+    .nye-number {
+      font-size: 2.5rem;
+      font-weight: 300;
+      color: #ffd700;
+    }
+    
+    .nye-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.7rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.5);
+      margin-top: 6px;
+    }
+    
+    .cta-button {
+      display: inline-block;
+      padding: 20px 55px;
+      background: linear-gradient(135deg, #ffd700 0%, #ff8c00 100%);
+      color: #1a1a2e;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.4s ease;
+      opacity: 0;
+      animation: fadeUp 1s ease forwards 3s;
+      box-shadow: 0 10px 50px rgba(255, 215, 0, 0.3);
+    }
+    
+    .cta-button:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 15px 60px rgba(255, 215, 0, 0.4);
+    }
+    
+    .footer-text {
+      position: absolute;
+      bottom: 40px;
+      font-size: 1rem;
+      color: rgba(255,255,255,0.5);
+      font-style: italic;
+      opacity: 0;
+      animation: fadeUp 1s ease forwards 3.5s;
+    }
+    
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    /* Stars */
+    .stars {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 50%;
+      pointer-events: none;
+      z-index: 1;
+    }
+    
+    .star {
+      position: absolute;
+      background: white;
+      border-radius: 50%;
+      animation: twinkle 2s ease-in-out infinite;
+    }
+    
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-image"></div>
+  
+  <div class="stars" id="stars"></div>
+  <div class="snow" id="snow"></div>
+  <div class="glow"></div>
+  
+  <div class="container">
+    <div class="reveal-badge">✨ The day I kept hidden ✨</div>
+    
+    <h1 class="main-title">
+      New Year's Eve at
+      <span class="highlight">Meili Snow Mountain</span>
+    </h1>
+    
+    <div class="location">Kawagebo · 6,740m · Sacred Peak of Tibet</div>
+    
+    <p class="story">
+      This is why I planned this trip.<br>
+      Tonight, we count down to 2026<br>
+      under the stars, in front of a mountain<br>
+      that pilgrims wait years to see.
+    </p>
+    
+    <div class="countdown-nye" id="countdown">
+      <div class="nye-item">
+        <div class="nye-number" id="hours">--</div>
+        <div class="nye-label">Hours</div>
+      </div>
+      <div class="nye-item">
+        <div class="nye-number" id="minutes">--</div>
+        <div class="nye-label">Minutes</div>
+      </div>
+      <div class="nye-item">
+        <div class="nye-number" id="seconds">--</div>
+        <div class="nye-label">Seconds</div>
+      </div>
+    </div>
+    
+    <a href="yunnan-journey.html#day11" class="cta-button">See Day 11</a>
+    
+    <div class="footer-text">Tomorrow morning, wake up early. Trust me.</div>
+  </div>
+
+  <script>
+    // Generate stars
+    const starsContainer = document.getElementById('stars');
+    for (let i = 0; i < 80; i++) {
+      const star = document.createElement('div');
+      star.className = 'star';
+      star.style.left = Math.random() * 100 + '%';
+      star.style.top = Math.random() * 100 + '%';
+      star.style.width = star.style.height = Math.random() * 2 + 1 + 'px';
+      star.style.animationDelay = Math.random() * 2 + 's';
+      starsContainer.appendChild(star);
+    }
+    
+    // Generate snow
+    const snowContainer = document.getElementById('snow');
+    for (let i = 0; i < 50; i++) {
+      const flake = document.createElement('div');
+      flake.className = 'snowflake';
+      flake.style.left = Math.random() * 100 + '%';
+      flake.style.width = flake.style.height = Math.random() * 4 + 2 + 'px';
+      flake.style.animationDuration = (Math.random() * 5 + 5) + 's';
+      flake.style.animationDelay = Math.random() * 5 + 's';
+      snowContainer.appendChild(flake);
+    }
+    
+    // Countdown to midnight Dec 31 → Jan 1
+    function updateCountdown() {
+      const target = new Date('2026-01-01T00:00:00+08:00');
+      const now = new Date();
+      const diff = target - now;
+      
+      if (diff <= 0) {
+        document.getElementById('hours').textContent = '🎉';
+        document.getElementById('minutes').textContent = '🎊';
+        document.getElementById('seconds').textContent = '✨';
+        return;
+      }
+      
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+      
+      document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+      document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+      document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+    }
+    
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+  </script>
+</body>
+</html>
